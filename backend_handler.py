@@ -30,17 +30,20 @@ class BackendHandler:
         self.Image,self.patch=self.ImageHandler.get_box_image_patch(self.current_pos)
 
 
-    def __change_image(self, way : int):
+    def change_image(self, way : int):
         
         """
         way : sens ou on change (image suivante ou précédente)
         """
+
 
         assert way in [1,-1]
         self.current_file_path=self.list_files[self.list_files.index(self.current_file_path)+way]
         self.ImageHandler=ImageHandler.ImageHandler(self.current_file_path)
         self.current_pos=[0,0]
         self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
+        print("sortie de change_image")
+
 
     def change_patch(self, way : int):
         assert way in [1,-1]
@@ -66,6 +69,8 @@ class BackendHandler:
                    self.current_pos[1]=9
                    self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
         print("pos: ",self.current_pos)
+
+
 
 
             

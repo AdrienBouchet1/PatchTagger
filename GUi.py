@@ -58,7 +58,7 @@ class main_window(tkinter.Frame) :
         self.right_frame=ttk.Frame(master=self)
         self.fvar=tkinter.StringVar()
         self.fvar.set("None")
-       
+        
 
 
         self.lab_main_image=ttk.Label(master=self.left_frame)
@@ -67,6 +67,11 @@ class main_window(tkinter.Frame) :
         self.bind("<Right>",lambda e:  self.__change_patch_pos(e, 1))
         self.bind("<Left>",lambda e:  self.__change_patch_pos(e, -1))
         
+        self.next_image_button=ttk.Button(master=self.left_frame,text="Image suivante",command= lambda : self.__change_image(1))
+        self.previous_image_button=ttk.Button(master=self.left_frame,text="Image précédente",command= lambda : self.__change_image(-1))
+        
+
+
         self.lab_patch=ttk.Label(master=self.right_frame)
         self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
         self.lab_patch["image"]=self.patch
@@ -82,8 +87,11 @@ class main_window(tkinter.Frame) :
     def __grid_components(self) : 
         self.left_frame.grid(row=0,column=0)
         self.right_frame.grid(row=0,column=1)
-        self.lab_main_image.grid(row=0,column=0)
+        self.lab_main_image.grid(row=1,column=0,columnspan=6)
         self.lab_patch.grid(row=0,column=0)
+
+        self.next_image_button.grid(row=0,column=4)
+        self.previous_image_button.grid(row=0,column=2)
 
         pass
 
@@ -92,7 +100,7 @@ class main_window(tkinter.Frame) :
         """
         
         """
-        print({1:"right",-1:"left"}[way])
+        print("appel")
         self.backend_handler.change_patch(way)
         self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
         self.lab_main_image.config(image=self.main_image)
@@ -102,9 +110,23 @@ class main_window(tkinter.Frame) :
         self.lab_patch.config(image=self.patch)
         self.lab_patch.image=self.patch
         
-
-
         
+    def __change_image(self,way) : 
+
+    
+
+      
+        self.backend_handler.change_image(way)
+
+        self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
+        self.lab_main_image.config(image=self.main_image)
+        self.lab_main_image.image=self.main_image
+
+        self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
+        self.lab_patch.config(image=self.patch)
+        self.lab_patch.image=self.patch
+        self.focus_set()
+      
 
 
 class config_window(tkinter.Frame) : 
