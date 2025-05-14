@@ -1,0 +1,87 @@
+
+from PIL import Image,ImageDraw,ImageTk
+import numpy as np 
+
+
+
+class ImageHandler : 
+
+    def __init__(self,path): 
+        """
+        On considère que des images en 768x1280, avec du crop en 128x128
+        
+        """
+        self.path=path
+        self.__open_image()
+        
+
+    def __open_image(self) : 
+
+        self.image=Image.open(self.path)
+        print(self.image)
+        self.im_array=np.array(self.image)
+
+        assert self.im_array.shape==(768,1280), "the image must be of size 768x1280"
+        self.image_patches_=self.__get_image_patches()
+
+
+
+    def __get_image_patches(self,n_rows=6,n_cols=10) : 
+
+        
+
+            assert self.im_array.ndim == 2, "L'image doit être en 2D (grayscale)"
+            height, width = self.im_array.shape
+
+            assert height % n_rows == 0, f"Hauteur de l'image ({height}) non divisible par {n_rows}"
+            assert width % n_cols == 0, f"Largeur de l'image ({width}) non divisible par {n_cols}"
+
+            patch_h = height // n_rows
+            patch_w = width // n_cols
+
+            patch_dict = {}
+
+            for i in range(n_rows):
+                for j in range(n_cols):
+                    x_min = i * patch_h
+                    x_max = x_min + patch_h
+                    y_min = j * patch_w
+                    y_max = y_min + patch_w
+
+                    patch = Image.fromarray(self.im_array[x_min:x_max, y_min:y_max])
+                    patch_dict[(i, j)] = {
+                        'pos': (x_min, x_max, y_min, y_max),
+                        'patch': patch
+                    }
+         
+            return patch_dict
+
+    def __draw_patch_box(self, tuple_coord: tuple) : 
+         
+         
+         image=self.image.copy().convert("RGB")
+         draw = ImageDraw.Draw(image)
+   
+         (x_min, x_max, y_min, y_max) = tuple_coord
+         draw.rectangle([y_min, x_min, y_max, x_max], outline="red", width=2)
+
+
+         return image
+    
+
+    def get_box_image_patch(self,pos : tuple):
+         
+         
+         patch=self.image_patches_[tuple(pos)]["patch"]
+         #patch_tk=ImageTk.PhotoImage(patch)
+         boxed_image=self.__draw_patch_box(self.image_patches_[tuple(pos)]["pos"]).resize((640,384))
+         #boxed_image_tk=ImageTk.PhotoImage(boxed_image)
+         return patch, boxed_image   
+
+        
+
+
+
+    
+
+
