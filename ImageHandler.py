@@ -12,6 +12,7 @@ class ImageHandler :
         
         """
         self.path=path
+        
         self.__open_image()
         
 
@@ -79,6 +80,21 @@ class ImageHandler :
          return patch, boxed_image   
 
         
+    def change_color_patch(self,pos,color): 
+        self.image=self.image.convert("RGBA")
+
+        # Convertir hex -> RGB
+        rgb = tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
+        opacity = int(0.3 * 255)
+        print(self.image_patches_[tuple(pos)]["pos"])
+        (y_min, y_max, x_min, x_max) = tuple(self.image_patches_[tuple(pos)]["pos"])
+        overlay = Image.new("RGBA", (x_max - x_min, y_max - y_min), rgb + (opacity,))
+
+        # Appliquer l'overlay sur l'image
+        self.image.paste(overlay, (x_min, y_min), overlay)
+
+
+
 
 
 
