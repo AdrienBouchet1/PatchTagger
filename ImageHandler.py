@@ -1,6 +1,7 @@
 
 from PIL import Image,ImageDraw,ImageTk
 import numpy as np 
+import copy
 
 
 
@@ -81,9 +82,27 @@ class ImageHandler :
 
         
     def change_color_patch(self,pos,color): 
-        self.image=self.image.convert("RGBA")
+        
+        if "color" in self.image_patches_[tuple(pos)].keys():
+             
+             x_min, x_max, y_min, y_max=self.image_patches_[tuple(pos)]["pos"]
+             original_patch=np.stack((np.array(self.image_patches_[tuple(pos)]["patch"]),)*3,axis=-1) ##Passage en RGB
+             alpha=np.full((original_patch.shape[0], original_patch.shape[1], 1), 255, dtype=np.uint8)
+             
+             original_patch=np.concatenate((original_patch,alpha ), axis=-1)
+             tab_image=np.array(self.image)
+             tab_image[x_min:x_max,y_min:y_max]=original_patch
+         
+             self.image=Image.fromarray(tab_image)
+               
+             if self.image_patches_[tuple(pos)]["color"] == color : 
+                del self.image_patches_[tuple(pos)]["color"]
+                return 
+     
+        
 
-        # Convertir hex -> RGB
+        self.image_patches_[tuple(pos)]["color"]=color
+        self.image=self.image.convert("RGBA")
         rgb = tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
         opacity = int(0.3 * 255)
         print(self.image_patches_[tuple(pos)]["pos"])
@@ -92,6 +111,8 @@ class ImageHandler :
 
         # Appliquer l'overlay sur l'image
         self.image.paste(overlay, (x_min, y_min), overlay)
+
+
 
 
 

@@ -24,7 +24,13 @@ class loader :
         self.notebook.grid(row=0,column=0)
         self.notebook.add(main_window(self.notebook,backend_handler=self.backend_handler),text="main")
         self.notebook.add(config_window(self.notebook,backend_handler=self.backend_handler),text="settings")
+    
+
+        
+
         self.notebook.bind("<<NotebookTabChanged>>", self.__on_tab_change)
+
+     
 
 
 
@@ -35,9 +41,11 @@ class loader :
         self.root.mainloop()
 
     def __on_tab_change(self, event):
+        
         selected_tab = event.widget.select()
         tab_frame = event.widget.nametowidget(selected_tab)
-        tab_frame.focus_set()
+        if self.backend_handler.prepared_output: ### De la sorte on peut rien faire si on n'a rien fait
+            tab_frame.focus_set()
 
 
 class main_window(tkinter.Frame) : 
@@ -49,7 +57,7 @@ class main_window(tkinter.Frame) :
         self.__instantiate()
         self.__grid_components()
 
-        self.focus_set()
+        
 
 
 
@@ -97,6 +105,7 @@ class main_window(tkinter.Frame) :
 
     def __maj_categorie_frame(self) : 
         
+        
         dic_classes=self.backend_handler.available_categories 
         for index,(key,dic) in enumerate(dic_classes.items())  : 
             lab1=ttk.Label(master=self.categories_frame,text="{} : {}".format(key,dic["name"]))
@@ -112,15 +121,18 @@ class main_window(tkinter.Frame) :
         """
         
         """
-      
-        self.backend_handler.change_Image_color(cat)
-        self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
-        self.lab_main_image.config(image=self.main_image)
-        self.lab_main_image.image=self.main_image
+        if self.backend_handler.prepared_output :
+                
+            self.backend_handler.change_Image_color(cat)
+            self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
+            self.lab_main_image.config(image=self.main_image)
+            self.lab_main_image.image=self.main_image
 
-        self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
-        self.lab_patch.config(image=self.patch)
-        self.lab_patch.image=self.patch
+            self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
+            self.lab_patch.config(image=self.patch)
+            self.lab_patch.image=self.patch
+        else: 
+            print("Configure output before")
         
 
 
@@ -151,30 +163,37 @@ class main_window(tkinter.Frame) :
         """
         
         """
-        print("appel")
-        self.backend_handler.change_patch(way)
-        self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
-        self.lab_main_image.config(image=self.main_image)
-        self.lab_main_image.image=self.main_image
-
-        self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
-        self.lab_patch.config(image=self.patch)
-        self.lab_patch.image=self.patch
+        if self.backend_handler.prepared_output :
         
-        self.focus_set()
+                self.backend_handler.change_patch(way)
+                self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
+                self.lab_main_image.config(image=self.main_image)
+                self.lab_main_image.image=self.main_image
+
+                self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
+                self.lab_patch.config(image=self.patch)
+                self.lab_patch.image=self.patch
+                
+                self.focus_set()
+        else : 
+            print("configure output before")
         
     def __change_image(self,way) : 
 
-        self.backend_handler.change_image(way)
 
-        self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
-        self.lab_main_image.config(image=self.main_image)
-        self.lab_main_image.image=self.main_image
-        self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
-        self.lab_patch.config(image=self.patch)
-        self.lab_patch.image=self.patch
-        self.focus_set()
-      
+
+        if self.backend_handler.prepared_output :
+                self.backend_handler.change_image(way)
+
+                self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
+                self.lab_main_image.config(image=self.main_image)
+                self.lab_main_image.image=self.main_image
+                self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
+                self.lab_patch.config(image=self.patch)
+                self.lab_patch.image=self.patch
+                self.focus_set()
+        else :
+            print("configure output before")
 
 
 class config_window(tkinter.Frame) : 
@@ -194,14 +213,19 @@ class config_window(tkinter.Frame) :
         ### Les frames principales du notebook
         self.add_categories_frame=ttk.Frame(master=self) 
         self.folder_selection_frame=ttk.Frame(master=self)
-      
+       
 
         ### Frame de sélection du dossier
         self.button_folder_selection=tkinter.Button(master=self.folder_selection_frame,text="sélectionner un dossier",command=self.__folder_selection)
         
         self.folder_var=tkinter.StringVar()
-        self.folder_var.set("Selected folder : None")
+        self.folder_var.set("Selected data folder : None")
         self.folder_label=tkinter.Label(master=self.folder_selection_frame,textvariable=self.folder_var)
+
+        self.output_folder_var=tkinter.StringVar()
+        self.output_folder_var.set("Selected output folder : None")
+        self.output_folder_label=tkinter.Label(master=self.folder_selection_frame,textvariable=self.output_folder_var)
+        self.button_output_folder_selection=tkinter.Button(master=self.folder_selection_frame,text="sélectionner un dossier d'output",command=self.__output_folder_selection)
 
         ### Frame d'ajout de catégorie
         self.entry_cat_name=tkinter.StringVar()
@@ -215,13 +239,19 @@ class config_window(tkinter.Frame) :
 
         self.add_categories_frame.grid(row=0,column=0)
         self.folder_selection_frame.grid(row=0,column=1)
-        
-
+       
         self.button_folder_selection.grid(column=1,row=0)
         self.folder_label.grid(column=1,row=1)
+
+        self.button_output_folder_selection.grid(column=2,row=0)
+        self.output_folder_label.grid(column=2,row=1)
+
+
         self.cat_name_entry.grid(column=0,row=0)
         self.colorselector.grid(column=0,row=1)
         self.save_class_Button.grid(column=0,row=2)
+
+
         
 
 
@@ -247,6 +277,13 @@ class config_window(tkinter.Frame) :
         self.folder_var.set("folder : {}".format(self.file_folder))
         self.backend_handler.folder=self.file_folder
         self.backend_handler.list_dir()
+
+    def __output_folder_selection(self) : 
+
+        self.output_file_folder=tkinter.filedialog.askdirectory(initialdir="/home/adrienb/Documents/Adrien/Code/output_PTagger",title="Select an output folder")
+        self.output_folder_var.set("folder : {}".format(self.output_file_folder))
+        self.backend_handler.prepare_output(self.output_file_folder)
+       
         
 
 
