@@ -2,20 +2,38 @@
 from PIL import Image,ImageDraw,ImageTk
 import numpy as np 
 import copy
-
-
+import os 
+import pandas as pd 
+import ast
 
 class ImageHandler : 
 
-    def __init__(self,path): 
+    def __init__(self,path,df_category,available_categories): 
         """
         On considère que des images en 768x1280, avec du crop en 128x128
         
         """
         self.path=path
-        
+        self.ImageName=os.path.basename(self.path)
+        self.df_state=df_category.loc[df_category["Image_name"] == self.ImageName]
+        print("à l'init: le df du handler est : {}".format(self.df_state) )
+        self.available_categories=available_categories
         self.__open_image()
+        self.__load_previous_categories()
+    
+    def  __load_previous_categories(self): 
+         
+         for index,row in self.df_state.iterrows() : 
+              print("recognized : ",row["patch_pos"],row["category"])
+              pos=tuple(ast.literal_eval(row["patch_pos"]))
+              self.change_color_patch(pos,self.available_categories[row["category"]]["color"])
         
+         
+
+
+    def get_pos_coord(self, pos) : 
+         (x_min, x_max, y_min, y_max) = tuple(self.image_patches_[tuple(pos)]["pos"])
+         return x_min, x_max, y_min, y_max
 
     def __open_image(self) : 
 
@@ -25,8 +43,7 @@ class ImageHandler :
 
         assert self.im_array.shape==(768,1280), "the image must be of size 768x1280"
         self.image_patches_=self.__get_image_patches()
-
-
+        
 
     def __get_image_patches(self,n_rows=6,n_cols=10) : 
 
@@ -82,7 +99,8 @@ class ImageHandler :
 
         
     def change_color_patch(self,pos,color): 
-        
+        print( self.image_patches_[tuple(pos)])
+        self.image=self.image.convert("RGBA")
         if "color" in self.image_patches_[tuple(pos)].keys():
              
              x_min, x_max, y_min, y_max=self.image_patches_[tuple(pos)]["pos"]

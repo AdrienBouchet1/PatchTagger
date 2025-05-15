@@ -48,6 +48,7 @@ class loader :
             tab_frame.focus_set()
 
 
+
 class main_window(tkinter.Frame) : 
 
     def __init__(self, master,backend_handler) : 
@@ -94,6 +95,12 @@ class main_window(tkinter.Frame) :
         self.bind("<KP_3>", lambda e:self.__classify_patch(e,3) )
         self.bind("<KP_4>", lambda e:self.__classify_patch(e,4) )
         self.bind("<KP_5>", lambda e:self.__classify_patch(e,5) )
+        self.bind("<KP_6>", lambda e:self.__classify_patch(e,6) )
+        self.bind("<KP_7>", lambda e:self.__classify_patch(e,7) )
+        self.bind("<KP_8>", lambda e:self.__classify_patch(e,8) )
+        self.bind("<KP_9>", lambda e:self.__classify_patch(e,9) )
+    
+
 
          ### Frame de visualisation des catégories instanciées
         
@@ -112,6 +119,9 @@ class main_window(tkinter.Frame) :
             lab1.grid(row=index+1,column=0)
             color_label = tkinter.Label(self.categories_frame, bg=dic["color"], width=4, height=2, relief="solid", bd=1)
             color_label.grid(row=index+1,column=1)
+        print(dic_classes)
+        
+            
 
 
         self.focus_set()
@@ -121,18 +131,19 @@ class main_window(tkinter.Frame) :
         """
         
         """
+         
         if self.backend_handler.prepared_output :
-                
-            self.backend_handler.change_Image_color(cat)
-            self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
-            self.lab_main_image.config(image=self.main_image)
-            self.lab_main_image.image=self.main_image
+            if cat in self.backend_handler.available_categories :  
+                self.backend_handler.change_Image_color(cat)
+                self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
+                self.lab_main_image.config(image=self.main_image)
+                self.lab_main_image.image=self.main_image
 
-            self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
-            self.lab_patch.config(image=self.patch)
-            self.lab_patch.image=self.patch
-        else: 
-            print("Configure output before")
+                self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
+                self.lab_patch.config(image=self.patch)
+                self.lab_patch.image=self.patch
+            else: 
+                print("Configure output before")
         
 
 
@@ -273,16 +284,24 @@ class config_window(tkinter.Frame) :
 
     def __folder_selection(self) : 
 
-        self.file_folder=tkinter.filedialog.askdirectory(initialdir="/home/adrienb/Documents/Adrien/datasets/processed_128_128/croped_768x1280",title="Select a folder")
-        self.folder_var.set("folder : {}".format(self.file_folder))
-        self.backend_handler.folder=self.file_folder
-        self.backend_handler.list_dir()
+       
+        if self.backend_handler.prepared_output :
+
+            self.file_folder=tkinter.filedialog.askdirectory(initialdir="/home/adrienb/Documents/Adrien/datasets/processed_128_128/croped_768x1280",title="Select a folder")
+            self.folder_var.set("folder : {}".format(self.file_folder))
+            self.backend_handler.folder=self.file_folder
+            self.backend_handler.list_dir()
+
+        else : 
+            print("please choose output_folder before")
 
     def __output_folder_selection(self) : 
 
         self.output_file_folder=tkinter.filedialog.askdirectory(initialdir="/home/adrienb/Documents/Adrien/Code/output_PTagger",title="Select an output folder")
         self.output_folder_var.set("folder : {}".format(self.output_file_folder))
         self.backend_handler.prepare_output(self.output_file_folder)
+
+    
        
         
 
