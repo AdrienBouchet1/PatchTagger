@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image,ImageTk
 import pandas as pd 
 import json 
+import ast
 
 
 class BackendHandler:
@@ -16,9 +17,9 @@ class BackendHandler:
 
 
     def __instantiate_variables(self): 
-        
+        self.list_files=None
         self.folder=None
-        self.Image=Image.fromarray(np.full((768,1280), fill_value=255,dtype=np.uint8))
+        self.Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
         self.patch=Image.fromarray(np.full((128,128), fill_value=255,dtype=np.uint8))
         self.prepared_output=False
         self.available_categories=self.__instantiate_default_categories()
@@ -151,11 +152,46 @@ class BackendHandler:
             
 
 
-
-
-
-
+    def save_patches(self,mask_extension): 
         
+        
+        if not self.prepared_output : 
+            print("Select an output folder before")
+        elif self.list_files is None : 
+            print("Select a data folder")
+            
+            
+        else :
+            folder_cat=os.path.join(self.output_dir,"patches")
+            if not os.path.exists(folder_cat) : 
+                os.makedirs(folder_cat) 
+                
+            for cat in self.available_categories.keys() :
+                path_cat=os.path.join(folder_cat,"{}".format(cat))
+                if not os.path.exists(path_cat) : 
+                    os.makedirs(path_cat)
+            
+                
+            for image_path in self.list_files :
+
+                subset_df=self.df_category.loc[self.df_category["Image_path"]==image_path]
+                image_handler=ImageHandler.ImageHandler(image_path,self.df_category,self.available_categories,"_cp_masks.png")
+                image_handler.load_mask()
+                for index,row in subset_df.iterrows() :
+                    pos,cat=tuple(ast.literal_eval(row["patch_pos"])),int(row["category"])
+                    image,mask=image_handler.get_patch_patchMask(pos)
+                    image_name="{}_({}_{}).tif".format(row["Image_name"].split(".tif")[0],pos[0],pos[1])
+                    image.save(os.path.join(folder_cat,str(cat),image_name))
+                    
+                    mask_name="{}{}_({}_{}).{}".format(row["Image_name"].split(".tif")[0],mask_extension.split(".")[0],pos[0],pos[1],mask_extension.split(".")[1])
+                    print("mask_name : {}, mask.size : {}".format(mask_name,np.array(mask).shape))
+                    mask.save(os.path.join(folder_cat,str(cat),mask_name))
+
+
+
+            
+
+
 
     def prepare_output(self,path : str) : 
         

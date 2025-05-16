@@ -8,13 +8,14 @@ import ast
 
 class ImageHandler : 
 
-    def __init__(self,path,df_category,available_categories): 
+    def __init__(self,path,df_category,available_categories,extension_mask:str=None): 
         """
         On considère que des images en 768x1280, avec du crop en 128x128
         
         """
         self.path=path
         self.ImageName=os.path.basename(self.path)
+        self.extension_mask=extension_mask
         self.df_state=df_category.loc[df_category["Image_name"] == self.ImageName]
         print("à l'init: le df du handler est : {}".format(self.df_state) )
         self.available_categories=available_categories
@@ -24,7 +25,7 @@ class ImageHandler :
     def  __load_previous_categories(self): 
          
          for index,row in self.df_state.iterrows() : 
-              print("recognized : ",row["patch_pos"],row["category"])
+        
               pos=tuple(ast.literal_eval(row["patch_pos"]))
               self.change_color_patch(pos,self.available_categories[row["category"]]["color"])
         
@@ -38,11 +39,12 @@ class ImageHandler :
     def __open_image(self) : 
 
         self.image=Image.open(self.path)
-        print(self.image)
+     
         self.im_array=np.array(self.image)
 
         assert self.im_array.shape==(768,1280), "the image must be of size 768x1280"
         self.image_patches_=self.__get_image_patches()
+        
         
 
     def __get_image_patches(self,n_rows=6,n_cols=10) : 
@@ -87,6 +89,38 @@ class ImageHandler :
 
          return image
     
+    def load_mask(self) : 
+         """
+         
+         """
+         extension_mask=self.extension_mask
+         if extension_mask is not None : 
+              image_pth=os.path.splitext(self.path)[0]
+              mask_full_path="{}{}".format(image_pth,extension_mask)
+              if os.path.exists(mask_full_path) : 
+                   self.mask_type="original"
+                   self.mask=np.array(Image.open(mask_full_path))
+             
+         else: 
+               self.mask_type="new"      
+
+         if self.mask_type=="new": 
+              shape=np.array(self.im_array.shape)
+              self.mask=np.full(shape=shape,fill_value=1)
+
+         
+    
+          
+    def get_patch_patchMask(self,pos: tuple): 
+
+        patch=self.image_patches_[tuple(pos)]["patch"]
+        x_min, x_max, y_min, y_max=self.image_patches_[tuple(pos)]["pos"]
+        print("tout d'abord:  shape : {}".format((self.mask[x_min:x_max,y_max:y_max].shape)))
+        mask_patch=Image.fromarray(self.mask[x_min:x_max,y_min:y_max])
+
+        return patch,mask_patch
+         
+
 
     def get_box_image_patch(self,pos : tuple):
          
@@ -99,7 +133,7 @@ class ImageHandler :
 
         
     def change_color_patch(self,pos,color): 
-        print( self.image_patches_[tuple(pos)])
+      
         self.image=self.image.convert("RGBA")
         if "color" in self.image_patches_[tuple(pos)].keys():
              
@@ -123,7 +157,7 @@ class ImageHandler :
         self.image=self.image.convert("RGBA")
         rgb = tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
         opacity = int(0.3 * 255)
-        print(self.image_patches_[tuple(pos)]["pos"])
+      
         (y_min, y_max, x_min, x_max) = tuple(self.image_patches_[tuple(pos)]["pos"])
         overlay = Image.new("RGBA", (x_max - x_min, y_max - y_min), rgb + (opacity,))
 
