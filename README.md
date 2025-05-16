@@ -13,7 +13,7 @@ First, create a conda environment and install required dependencies :
 
 
 ```bash 
-conda env create -f environment.yml --name PatchTagger
+conda env create -f requirements.yaml --name PatchTagger
 conda activate PatchTagger
 ``` 
 

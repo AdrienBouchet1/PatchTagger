@@ -1,10 +1,7 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath("/home/adrienb/Documents/Adrien/Code/PatchTagger/src"))
-
-
-
+sys.path.append(os.path.abspath("./src"))
 import GUi
 
 
