@@ -1,6 +1,10 @@
 # PatchTagger
 
 PatchTagger is a simple tool to classify patches.
+<p align="center">
+  <img src="images/PatchTagger.png" alt="Aperçu de l'application" width="400"/>
+</p>
+
 
 ## Start with PatchTagger
 
