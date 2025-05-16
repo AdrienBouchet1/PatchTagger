@@ -7,10 +7,18 @@ def apply_styles():
     style.theme_use('clam')   
     
     style.configure('notebook2.TNotebook',background= "#29dceb")
+    style.configure("notebook2.TNotebook.Tab",
+                     background="#8FE3A4", 
+                   )
+
+    style.map("notebook2.TNotebook.Tab",
+          background=[("selected", "white")],
+          foreground=[("selected", "black")])
+    
 
     style.configure("category_label.TLabel", 
                     font=('Helvetica', 8),
-                    foreground='#000000',
+                    foreground="black",
                     anchor="w",
                     justify='left'
     )
@@ -19,5 +27,11 @@ def apply_styles():
                     borderwidth=1,
                     relief='solid',
                     padding=4
+
+    )
+
+    style.configure(
+        "tab_1.TFrame",
+        background="#8FE3A4"
 
     )

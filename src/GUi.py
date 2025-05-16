@@ -22,6 +22,7 @@ class loader :
         
         self.root=tkinter.Tk()
         self.root.resizable(False,False)
+        styles.apply_styles()
         self.root.title("PatchTagger")
         self.notebook=ttk.Notebook(self.root,style='notebook2.TNotebook')
         self.notebook.grid(row=0,column=0)
@@ -32,7 +33,7 @@ class loader :
         
 
         self.notebook.bind("<<NotebookTabChanged>>", self.__on_tab_change)
-        styles.apply_styles()
+        
 
         
 
@@ -68,9 +69,9 @@ class main_window(tkinter.Frame) :
 
         #styles.apply_styles()
 
-        self.left_frame=ttk.Frame(master=self)
-        self.right_frame=ttk.Frame(master=self)
-        self.categories_frame=ttk.Frame(master=self.right_frame)
+        self.left_frame=ttk.Frame(master=self,style="tab_1.TFrame")
+        self.right_frame=ttk.Frame(master=self,style="tab_1.TFrame")
+        self.categories_frame=ttk.Frame(master=self.right_frame,style="tab_1.TFrame")
 
         self.fvar=tkinter.StringVar()
         self.fvar.set("None")
