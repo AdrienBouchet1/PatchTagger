@@ -5,6 +5,7 @@ import tkinter.filedialog
 import backend_handler
 from PIL import ImageTk,Image
 import styles
+import sv_ttk
 
 
 
@@ -86,7 +87,12 @@ class main_window(tkinter.Frame) :
         
         self.next_image_button=ttk.Button(master=self.left_frame,text="Image suivante",command= lambda : self.__change_image(1))
         self.previous_image_button=ttk.Button(master=self.left_frame,text="Image précédente",command= lambda : self.__change_image(-1))
-        
+
+
+        self.context_checkvar=tkinter.BooleanVar()
+        self.context_checkvar.set(True)
+        self.lab_hide_context=ttk.Label(master=self.left_frame,text="Cacher le context")
+        self.hide_context_checkbox=ttk.Checkbutton(master=self.left_frame,variable=self.context_checkvar,command=self.__on_check_hide_context)
 
 
         self.lab_patch=ttk.Label(master=self.right_frame)
@@ -112,7 +118,7 @@ class main_window(tkinter.Frame) :
         self.__maj_categorie_frame()
         self.categories_title=ttk.Label(master=self.categories_frame,text="Catégories disponibles",style="title_.TLabel")
         self.button_refresh_cat=ttk.Button(master=self.categories_frame, text="Refresh categories", comman=self.__maj_categorie_frame )
-
+        sv_ttk.set_theme("dark")
         
 
     def __maj_categorie_frame(self) : 
@@ -164,18 +170,32 @@ class main_window(tkinter.Frame) :
 
         self.categories_frame.grid(row=3,column=0, columnspan=8,pady=(50,50))
 
-        self.lab_main_image.grid(row=1,column=0,columnspan=7)
+        self.lab_main_image.grid(row=1,column=0,columnspan=10)
         self.lab_patch.grid(row=0,column=3)
 
 
-        self.next_image_button.grid(row=0,column=4)
-        self.previous_image_button.grid(row=0,column=2)
+
+        self.next_image_button.grid(row=0,column=7)
+        self.previous_image_button.grid(row=0,column=4)
+
+        self.lab_hide_context.grid(row=0,column=0,columnspan=2)
+        self.hide_context_checkbox.grid(row=0,column=3)
+
         
-        
-        self.categories_title.grid(row=1,column=0,)
+        self.categories_title.grid(row=1,column=0)
         self.button_refresh_cat.grid(row=0,column=0)
         
 
+    def __on_check_hide_context(self) : 
+
+        var=self.context_checkvar.get()
+        if var : 
+             self.lab_main_image.grid()
+    
+        else : 
+             self.lab_main_image.grid_remove()
+        self.focus_set()
+        
 
 
     def __change_patch_pos(self,event,way) : 
@@ -240,11 +260,11 @@ class config_window(tkinter.Frame) :
         
         self.folder_var=tkinter.StringVar()
         self.folder_var.set("Selected data folder : None")
-        self.folder_label=tkinter.Label(master=self.folder_selection_frame,textvariable=self.folder_var)
+        self.folder_label=tkinter.Label(master=self.folder_selection_frame,textvariable=self.folder_var,wraplength=200)
 
         self.output_folder_var=tkinter.StringVar()
         self.output_folder_var.set("Selected output folder : None")
-        self.output_folder_label=tkinter.Label(master=self.folder_selection_frame,textvariable=self.output_folder_var)
+        self.output_folder_label=tkinter.Label(master=self.folder_selection_frame,textvariable=self.output_folder_var,wraplength=200)
         self.button_output_folder_selection=tkinter.Button(master=self.folder_selection_frame,text="sélectionner un dossier d'output",command=self.__output_folder_selection)
 
         ### Frame d'ajout de catégorie

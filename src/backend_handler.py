@@ -17,6 +17,7 @@ class BackendHandler:
 
 
     def __instantiate_variables(self): 
+ 
         self.list_files=None
         self.folder=None
         self.Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
