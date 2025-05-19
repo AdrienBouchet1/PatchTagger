@@ -192,8 +192,10 @@ class BackendHandler:
 
             
 
-
-
+    def get_image_name(self) :
+        
+        return self.ImageHandler.ImageName
+    
     def prepare_output(self,path : str) : 
         
         self.output_dir=os.path.join(path,"PatchTagger_Output")

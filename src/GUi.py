@@ -84,17 +84,22 @@ class main_window(tkinter.Frame) :
         self.lab_main_image["image"]=self.main_image
         self.bind("<Right>",lambda e:  self.__change_patch_pos(e, 1))
         self.bind("<Left>",lambda e:  self.__change_patch_pos(e, -1))
+
+        
         
         self.next_image_button=ttk.Button(master=self.left_frame,text="Image suivante",command= lambda : self.__change_image(1))
         self.previous_image_button=ttk.Button(master=self.left_frame,text="Image précédente",command= lambda : self.__change_image(-1))
+        self.name_imageVar=tkinter.StringVar()
+        self.name_imageVar.set("Current image : None")
 
+        self.name_image_lab=ttk.Label(master=self.left_frame, textvariable=self.name_imageVar)
 
         self.context_checkvar=tkinter.BooleanVar()
         self.context_checkvar.set(True)
         self.lab_hide_context=ttk.Label(master=self.left_frame,text="Cacher le context")
         self.hide_context_checkbox=ttk.Checkbutton(master=self.left_frame,variable=self.context_checkvar,command=self.__on_check_hide_context)
 
-
+        
         self.lab_patch=ttk.Label(master=self.right_frame)
         self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
         self.lab_patch["image"]=self.patch
@@ -171,6 +176,7 @@ class main_window(tkinter.Frame) :
         self.categories_frame.grid(row=3,column=0, columnspan=8,pady=(50,50))
 
         self.lab_main_image.grid(row=1,column=0,columnspan=10)
+        self.name_image_lab.grid(row=2,column=2,columnspan=5)
         self.lab_patch.grid(row=0,column=3)
 
 
@@ -230,7 +236,11 @@ class main_window(tkinter.Frame) :
                 self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
                 self.lab_patch.config(image=self.patch)
                 self.lab_patch.image=self.patch
+
+                self.name_imageVar.set(self.backend_handler.get_image_name())
                 self.focus_set()
+
+                
         else :
             print("configure output before")
 
