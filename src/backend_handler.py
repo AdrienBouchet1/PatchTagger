@@ -17,7 +17,9 @@ class BackendHandler:
 
 
     def __instantiate_variables(self): 
- 
+        
+
+        self.display_context=True
         self.list_files=None
         self.folder=None
         self.Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
@@ -137,14 +139,13 @@ class BackendHandler:
         if not ((self.df_category["Image_name"]==self.ImageHandler.ImageName) & (self.df_category["patch_pos"]==str(self.current_pos))).any() : 
           
             x_min, x_max, y_min, y_max=self.ImageHandler.get_pos_coord(self.current_pos)
-            self.df_category=pd.concat([self.df_category,pd.DataFrame({"Image_name" : [self.ImageHandler.ImageName],"Image_path" : [self.ImageHandler.path],"patch_pos" : [str(self.current_pos)], "x_min" : [x_min],"x_max" : [x_max],"y_min" : [y_min],"y_max" : [y_max],"category" : [cat]})])
+            self.df_category=pd.concat([self.df_category,pd.DataFrame({"Image_name" : [self.ImageHandler.ImageName],"Image_path" : [self.ImageHandler.path],"patch_pos" : [str(self.current_pos)], "x_min" : [x_min],"x_max" : [x_max],"y_min" : [y_min],"y_max" : [y_max],"category" : [cat],"with-context": self.display_context})])
             self.df_category.to_excel(self.category_df_path,index=False) ### Comme ça on enregistre A CHAQUE FOIS
         
         elif (self.df_category.loc[(self.df_category["Image_name"] == self.ImageHandler.ImageName) &(self.df_category["patch_pos"] == str(self.current_pos)),"category"] != cat).any():
 
-            
-
              self.df_category.loc[(self.df_category["Image_name"] == self.ImageHandler.ImageName) &(self.df_category["patch_pos"] == str(self.current_pos)),"category"] = cat
+             self.df_category.loc[(self.df_category["Image_name"] == self.ImageHandler.ImageName) &(self.df_category["patch_pos"] == str(self.current_pos)),"with-context"] = self.display_context
              self.df_category.to_excel(self.category_df_path,index=False)
         else :
  

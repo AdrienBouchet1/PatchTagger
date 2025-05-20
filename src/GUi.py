@@ -176,7 +176,7 @@ class main_window(tkinter.Frame) :
         self.categories_frame.grid(row=3,column=0, columnspan=8,pady=(50,50))
 
         self.lab_main_image.grid(row=1,column=0,columnspan=10)
-        self.name_image_lab.grid(row=2,column=2,columnspan=5)
+        self.name_image_lab.grid(row=2,column=1,columnspan=7)
         self.lab_patch.grid(row=0,column=3)
 
 
@@ -197,9 +197,11 @@ class main_window(tkinter.Frame) :
         var=self.context_checkvar.get()
         if var : 
              self.lab_main_image.grid()
+             self.backend_handler.display_context=True
     
         else : 
              self.lab_main_image.grid_remove()
+             self.backend_handler.display_context=False
         self.focus_set()
         
 
