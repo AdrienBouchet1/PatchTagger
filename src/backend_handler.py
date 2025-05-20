@@ -156,7 +156,7 @@ class BackendHandler:
 
     def save_patches(self,mask_extension): 
         
-        
+        df_mapping=pd.DataFrame()
         if not self.prepared_output : 
             print("Select an output folder before")
         elif self.list_files is None : 
@@ -180,6 +180,7 @@ class BackendHandler:
                 image_handler=ImageHandler.ImageHandler(image_path,self.df_category,self.available_categories,"_cp_masks.png")
                 image_handler.load_mask()
                 for index,row in subset_df.iterrows() :
+                    
                     pos,cat=tuple(ast.literal_eval(row["patch_pos"])),int(row["category"])
                     image,mask=image_handler.get_patch_patchMask(pos)
                     image_name="{}_({}_{}).tif".format(row["Image_name"].split(".tif")[0],pos[0],pos[1])
@@ -189,9 +190,11 @@ class BackendHandler:
                     print("mask_name : {}, mask.size : {}".format(mask_name,np.array(mask).shape))
                     mask.save(os.path.join(folder_cat,str(cat),mask_name))
 
+                    df_mapping=pd.concat([df_mapping,pd.DataFrame({"Image" : [os.path.join(folder_cat,str(cat),image_name)],"Mask" : [os.path.join(folder_cat,str(cat),mask_name)],"category" : [int(row["category"])]})])
 
 
-            
+        df_mapping.to_excel(os.path.join(self.output_dir,"mapping.xlsx"),index=False)
+
 
     def get_image_name(self) :
         

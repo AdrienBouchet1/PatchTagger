@@ -101,12 +101,12 @@ class ImageHandler :
                    self.mask_type="original"
                    self.mask=np.array(Image.open(mask_full_path))
              
-         else: 
-               self.mask_type="new"      
+              else: 
+                    self.mask_type="new"      
 
          if self.mask_type=="new": 
               shape=np.array(self.im_array.shape)
-              self.mask=np.full(shape=shape,fill_value=1)
+              self.mask=np.full(shape=shape,fill_value=1,dtype=np.uint8)
 
          
     
@@ -115,7 +115,8 @@ class ImageHandler :
 
         patch=self.image_patches_[tuple(pos)]["patch"]
         x_min, x_max, y_min, y_max=self.image_patches_[tuple(pos)]["pos"]
-        print("tout d'abord:  shape : {}".format((self.mask[x_min:x_max,y_max:y_max].shape)))
+
+        print("tout d'abord:  shape : {}".format((self.mask[x_min:x_max,y_min:y_max])))
         mask_patch=Image.fromarray(self.mask[x_min:x_max,y_min:y_max])
 
         return patch,mask_patch
