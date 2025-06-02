@@ -33,14 +33,29 @@ class BackendHandler:
     def __instantiate_default_categories(self): 
 
 
+        # dict={
+
+        #     1 : {"name" : "floue,liss pas structure","color":"#235fff"},
+        #     2 : {"name" : "floue & microfibres","color":"#cf9511"},
+        #     3 : {"name" : "gros trous","color":"#f51515"},
+        #     4 : {"name" : "grosses fibres","color":"#42cf11"},
+        #      5 : {"name" : "granuleux net","color":"#cd23ff"}
+
+        # }
+
         dict={
 
-            1 : {"name" : "floue,liss pas structure","color":"#235fff"},
-            2 : {"name" : "floue & microfibres","color":"#cf9511"},
-            3 : {"name" : "gros trous","color":"#f51515"},
-            4 : {"name" : "grosses fibres","color":"#42cf11"},
-             5 : {"name" : "granuleux net","color":"#cd23ff"}
-
+            
+            1 : {"name" : "Ultra lisse","color":"#F2C458"},
+            2 : {"name" : "lisse, plat, irrégulier","color":"#a68108"},
+            3 : {"name" : "poilu","color":"#6ef07d"},
+            4 : {"name" : "Grosses fibres désordonnées","color":"#099406"},
+            5: {"name" : "Grosses fibres qui font stries","color":"#235fff"},
+            6 : {"name" : "texture ouatée","color":"#ed73df"},
+            7: {"name" : "Granuleux Fort","color":"#dc22dc"},
+            8 : {"name" : "Stratifié ordonné régulier","color":"#ff8223"},
+            9 : {"name" : "gros trous","color":"#e10017"},
+             
         }
         return dict
     def __load_previous_config(self,dict : dict): 
