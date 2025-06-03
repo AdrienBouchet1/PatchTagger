@@ -51,8 +51,9 @@ You can change the image the classify using the buttons, and change patchs with 
 
 
 
-
 ### Contact
+You can contact me at : 
+
 
 adrien.bouchet@agroparistech.fr
 
