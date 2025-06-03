@@ -50,3 +50,10 @@ Before starting, need to set up :
 You can change the image the classify using the buttons, and change patchs with keyboard arrows    $\leftarrow  \rightarrow $. Then, you can select the class for each patch pressing the right number on the keyboard. Everything will be saved automatically.
 
 
+
+
+### Contact
+
+adrien.bouchet@agroparistech.fr
+
+
