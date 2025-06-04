@@ -62,19 +62,19 @@ class BackendHandler:
         dict={
 
             
-            1 : {"name" : "Totalement homogène","color":"#F2C458","key" : "a" },
-            2 : {"name" : "Plutôt homogène","color":"#a68108","key" : "z" },
+            1 : {"name" : "Totalement homogène","color":"#6558F2","key" : "a" },
+            2 : {"name" : "Plutôt homogène","color":"#7d12d4","key" : "z" },
             3 : {"name" : "Faisceaux","color":"#6ef07d","key" : "e"},
             4 : {"name" : "Filaments","color":"#099406","key" : "r"},
-            5: {"name" : "Stratifié rectiligne","color":"#235fff","key" : "t"},
-            6 : {"name" : "Stratifié rectiligne","color":"#ed73df","key" : "y"},
-            7: {"name" : "Granuleux","color":"#dc22dc","key" : "u"},
-            8 : {"name" : "Sableux","color":"#ff8223","key" : "q"},
+            5: {"name" : "Stratifié rectiligne","color":"#e409f7","key" : "t"},
+            6 : {"name" : "Stratifié sinueux","color":"#a9399c","key" : "y"},
+            7: {"name" : "Granuleux","color":"#b55e07","key" : "u"},
+            8 : {"name" : "Sableux","color":"#ebcf6a","key" : "q"},
             9 : {"name" : "Trou","color":"#e10017","key" : "s"},
-             10: {"name" : "Bactéries","color":"#dc22dc","key" : "d"},
-            11 : {"name" : "(portion de) Cellule","color":"#2a2725","key" : "f"},
-            12 : {"name" : "Calcification","color":"#480f44","key" : "g"},
-            13 : {"name" : "Trou","color":"#e8e7e7","key" : "h"},
+             10: {"name" : "Bactéries","color":"#03f4f8","key" : "d"},
+            11 : {"name" : "(portion de) Cellule","color":"#2ba57e","key" : "f"},
+            12 : {"name" : "Calcification","color":"#a0a0a0","key" : "g"},
+            13 : {"name" : "Nd","color":"#e8e7e7","key" : "h"},
             
              
         }
@@ -138,7 +138,21 @@ class BackendHandler:
 
 
         assert way in [1,-1]
-        self.current_file_path=self.list_files[self.list_files.index(self.current_file_path)+way]
+        idx=self.list_files.index(self.current_file_path)
+        
+        if way == 1 : 
+                
+            if idx < len(self.list_files)-1 :
+                    self.current_file_path=self.list_files[idx+way]
+            elif idx == len(self.list_files)-1 : 
+                    self.current_file_path=self.list_files[0]
+        else : 
+            if idx>0 : 
+                self.current_file_path=self.list_files[idx+way]
+            else : 
+                self.current_file_path=self.list_files[-1]
+
+
         self.ImageHandler=ImageHandler.ImageHandler(self.current_file_path,self.df_category,self.available_categories)
         self.current_pos=[0,0]
         self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)

@@ -88,8 +88,11 @@ class main_window(tkinter.Frame) :
 
         
         
-        self.next_image_button=ttk.Button(master=self.left_frame,text="Image suivante",command= lambda : self.__change_image(1))
-        self.previous_image_button=ttk.Button(master=self.left_frame,text="Image précédente",command= lambda : self.__change_image(-1))
+        self.next_image_button=ttk.Button(master=self.left_frame,text="Image suivante",command= lambda : self.__change_image(None,1))
+        self.previous_image_button=ttk.Button(master=self.left_frame,text="Image précédente",command= lambda : self.__change_image(None,-1))
+        self.bind("<Shift-Right>",lambda e:  self.__change_image(e, 1))
+        self.bind("<Shift-Left>",lambda e: self.__change_image(e, -1))
+       
         self.name_imageVar=tkinter.StringVar()
         self.name_imageVar.set("Current image : None")
 
@@ -130,6 +133,7 @@ class main_window(tkinter.Frame) :
     def __maj_categorie_frame(self) : 
         
         
+        self.lab_keyboard=ttk.Label(master=self.categories_frame,text="Clavier")
         dic_classes=self.backend_handler.available_categories 
         for index,(key,dic) in enumerate(dic_classes.items())  : 
 
@@ -140,7 +144,7 @@ class main_window(tkinter.Frame) :
             but1.grid(row=index+2,column=1)
             self.bind(dic["key"], lambda e,key=key:self.__classify_patch(e,key) )
 
-            lab1=ttk.Label(master=self.categories_frame,text="Keyboard : {}".format(dic["key"]))
+            lab1=ttk.Label(master=self.categories_frame,text="{}".format(dic["key"]))
             lab1.grid(row=index+2,column=2)
 
 
@@ -188,6 +192,7 @@ class main_window(tkinter.Frame) :
 
         """
         """
+
         self.left_frame.grid(row=0,column=0,rowspan=3)
         self.right_frame.grid(row=0,column=1,rowspan=1)
 
@@ -206,7 +211,8 @@ class main_window(tkinter.Frame) :
         self.hide_context_checkbox.grid(row=0,column=3)
 
         
-        self.categories_title.grid(row=1,column=0)
+        self.categories_title.grid(row=0,column=0,pady=30,padx=20)
+        self.lab_keyboard.grid(row=0,column=2,padx=30)
 
         ##self.button_refresh_cat.grid(row=0,column=0)
         
@@ -244,7 +250,7 @@ class main_window(tkinter.Frame) :
         else : 
             print("configure output before")
         
-    def __change_image(self,way) : 
+    def __change_image(self,Event,way) : 
 
 
 
@@ -255,6 +261,7 @@ class main_window(tkinter.Frame) :
                 self.lab_main_image.config(image=self.main_image)
                 self.lab_main_image.image=self.main_image
                 self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
+
                 self.lab_patch.config(image=self.patch)
                 self.lab_patch.image=self.patch
 
