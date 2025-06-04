@@ -8,7 +8,7 @@ import ast
 
 class ImageHandler : 
 
-    def __init__(self,path,df_category,available_categories,extension_mask:str=None): 
+    def __init__(self,path,df_category,available_categories,extension_mask:str=None,patch_size : tuple =(256,256)): 
         """
         On considère que des images en 768x1280, avec du crop en 128x128
         
@@ -21,7 +21,8 @@ class ImageHandler :
         self.available_categories=available_categories
         self.__open_image()
         self.__load_previous_categories()
-    
+        self.patch_size=patch_size
+
     def  __load_previous_categories(self): 
          
          for index,row in self.df_state.iterrows() : 
@@ -29,8 +30,10 @@ class ImageHandler :
               pos=tuple(ast.literal_eval(row["patch_pos"]))
               self.change_color_patch(pos,self.available_categories[row["category"]]["color"])
         
-         
+    def get_image_classified(self) : 
 
+          return self.image     
+     
 
     def get_pos_coord(self, pos) : 
          (x_min, x_max, y_min, y_max) = tuple(self.image_patches_[tuple(pos)]["pos"])
@@ -49,6 +52,10 @@ class ImageHandler :
 
     def __get_image_patches(self,n_rows=6,n_cols=10) : 
 
+            """
+            Permet de récupérer les patch ses infors
+
+            """
         
 
             assert self.im_array.ndim == 2, "L'image doit être en 2D (grayscale)"
@@ -116,7 +123,7 @@ class ImageHandler :
         patch=self.image_patches_[tuple(pos)]["patch"]
         x_min, x_max, y_min, y_max=self.image_patches_[tuple(pos)]["pos"]
 
-        print("tout d'abord:  shape : {}".format((self.mask[x_min:x_max,y_min:y_max])))
+        #print("tout d'abord:  shape : {}".format((self.mask[x_min:x_max,y_min:y_max])))
         mask_patch=Image.fromarray(self.mask[x_min:x_max,y_min:y_max])
 
         return patch,mask_patch
@@ -124,14 +131,23 @@ class ImageHandler :
 
 
     def get_box_image_patch(self,pos : tuple):
+         """
+         C'est ici qu'on redimensionne l'image de patch pour l'avoir en + gros
          
+         """
+
+
+
          
          patch=self.image_patches_[tuple(pos)]["patch"]
+         patch=patch.resize(self.patch_size,Image.NEAREST)
+
          #patch_tk=ImageTk.PhotoImage(patch)
          boxed_image=self.__draw_patch_box(self.image_patches_[tuple(pos)]["pos"]).resize((640,384))
          #boxed_image_tk=ImageTk.PhotoImage(boxed_image)
          return patch, boxed_image   
 
+    
         
     def change_color_patch(self,pos,color): 
       

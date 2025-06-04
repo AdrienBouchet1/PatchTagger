@@ -83,7 +83,7 @@ class BackendHandler:
     def __load_previous_config(self,dict : dict): 
 
         self.available_categories={int(i):val for i,val in dict["available_categories"].items()}
-        print("nouvelles cat",self.available_categories)
+        #print("nouvelles cat",self.available_categories)
 
     
         
@@ -216,6 +216,10 @@ class BackendHandler:
                 path_cat=os.path.join(folder_cat,"{}".format(cat))
                 if not os.path.exists(path_cat) : 
                     os.makedirs(path_cat)
+            full_image_folder=os.path.join(self.output_dir,"full_images")
+            if not os.path.exists(full_image_folder) : 
+                os.makedirs(full_image_folder)
+
             
                 
             for image_path in self.list_files :
@@ -223,6 +227,17 @@ class BackendHandler:
                 subset_df=self.df_category.loc[self.df_category["Image_path"]==image_path]
                 image_handler=ImageHandler.ImageHandler(image_path,self.df_category,self.available_categories,"_cp_masks.png")
                 image_handler.load_mask()
+                
+                full_img_name=image_handler.ImageName
+
+                if subset_df.shape[0] != 0 :
+                        
+                    img=image_handler.get_image_classified().convert("RGB")
+                    
+                    img.save(os.path.join(full_image_folder,full_img_name))
+
+                
+                
                 for index,row in subset_df.iterrows() :
                     
                     pos,cat=tuple(ast.literal_eval(row["patch_pos"])),int(row["category"])

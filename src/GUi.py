@@ -14,7 +14,7 @@ class loader :
     def __init__(self) : 
         super().__init__()
         self.backend_handler=backend_handler.BackendHandler()
-        print("au départ, les catégories sont : {} ".format(self.backend_handler.available_categories))
+        #print("au départ, les catégories sont : {} ".format(self.backend_handler.available_categories))
         self.__instantiate()
         
         
@@ -101,7 +101,7 @@ class main_window(tkinter.Frame) :
         self.hide_context_checkbox=ttk.Checkbutton(master=self.left_frame,variable=self.context_checkvar,command=self.__on_check_hide_context)
 
         
-        self.lab_patch=ttk.Label(master=self.right_frame)
+        self.lab_patch=ttk.Label(master=self.left_frame)
         self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
         self.lab_patch["image"]=self.patch
         self.bind("<Right>",lambda e:  self.__change_patch_pos(e, 1))
@@ -137,13 +137,16 @@ class main_window(tkinter.Frame) :
             #lab1.grid(row=index+2,column=0,sticky="we")
 
             but1=ttk.Button(master=self.categories_frame,text=dic["name"],command=lambda key=key :(self.__classify_patch(None,key),self.focus_set()))
-            but1.grid(row=index+2,column=0)
+            but1.grid(row=index+2,column=1)
             self.bind(dic["key"], lambda e,key=key:self.__classify_patch(e,key) )
+
+            lab1=ttk.Label(master=self.categories_frame,text="Keyboard : {}".format(dic["key"]))
+            lab1.grid(row=index+2,column=2)
 
 
 
             color_label = tkinter.Label(self.categories_frame, bg=dic["color"], width=4, height=2, relief="solid", bd=1)
-            color_label.grid(row=index+2,column=1)
+            color_label.grid(row=index+2,column=0)
 
             
         print(dic_classes)
@@ -161,7 +164,7 @@ class main_window(tkinter.Frame) :
          
         if self.backend_handler.prepared_output :
             if cat in self.backend_handler.available_categories :  
-                print("avant classification, cats disops : {}".format(self.backend_handler.available_categories))
+                #print("avant classification, cats disops : {}".format(self.backend_handler.available_categories))
                 self.backend_handler.change_Image_color(cat)
                 self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
                 self.lab_main_image.config(image=self.main_image)
@@ -192,7 +195,7 @@ class main_window(tkinter.Frame) :
 
         self.lab_main_image.grid(row=1,column=0,columnspan=10)
         self.name_image_lab.grid(row=2,column=1,columnspan=7)
-        self.lab_patch.grid(row=0,column=3)
+        self.lab_patch.grid(row=3,column=3)
 
 
 
@@ -204,7 +207,8 @@ class main_window(tkinter.Frame) :
 
         
         self.categories_title.grid(row=1,column=0)
-        self.button_refresh_cat.grid(row=0,column=0)
+
+        ##self.button_refresh_cat.grid(row=0,column=0)
         
 
     def __on_check_hide_context(self) : 
