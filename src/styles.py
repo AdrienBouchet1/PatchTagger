@@ -11,6 +11,7 @@ def apply_styles():
                      background="#8FE3A4", 
                    )
 
+    
     style.map("notebook2.TNotebook.Tab",
           background=[("selected", "white")],
           foreground=[("selected", "black")])

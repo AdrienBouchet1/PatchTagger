@@ -43,20 +43,42 @@ class BackendHandler:
 
         # }
 
+        # dict={
+
+            
+        #     1 : {"name" : "Ultra lisse","color":"#F2C458"},
+        #     2 : {"name" : "lisse, plat, irrégulier","color":"#a68108"},
+        #     3 : {"name" : "poilu","color":"#6ef07d"},
+        #     4 : {"name" : "Grosses fibres désordonnées","color":"#099406"},
+        #     5: {"name" : "Grosses fibres qui font stries","color":"#235fff"},
+        #     6 : {"name" : "texture ouatée","color":"#ed73df"},
+        #     7: {"name" : "Granuleux Fort","color":"#dc22dc"},
+        #     8 : {"name" : "Stratifié ordonné régulier","color":"#ff8223"},
+        #     9 : {"name" : "gros trous","color":"#e10017"},
+             
+        # }
+
+
         dict={
 
             
-            1 : {"name" : "Ultra lisse","color":"#F2C458"},
-            2 : {"name" : "lisse, plat, irrégulier","color":"#a68108"},
-            3 : {"name" : "poilu","color":"#6ef07d"},
-            4 : {"name" : "Grosses fibres désordonnées","color":"#099406"},
-            5: {"name" : "Grosses fibres qui font stries","color":"#235fff"},
-            6 : {"name" : "texture ouatée","color":"#ed73df"},
-            7: {"name" : "Granuleux Fort","color":"#dc22dc"},
-            8 : {"name" : "Stratifié ordonné régulier","color":"#ff8223"},
-            9 : {"name" : "gros trous","color":"#e10017"},
+            1 : {"name" : "Totalement homogène","color":"#F2C458","key" : "a" },
+            2 : {"name" : "Plutôt homogène","color":"#a68108","key" : "z" },
+            3 : {"name" : "Faisceaux","color":"#6ef07d","key" : "e"},
+            4 : {"name" : "Filaments","color":"#099406","key" : "r"},
+            5: {"name" : "Stratifié rectiligne","color":"#235fff","key" : "t"},
+            6 : {"name" : "Stratifié rectiligne","color":"#ed73df","key" : "y"},
+            7: {"name" : "Granuleux","color":"#dc22dc","key" : "u"},
+            8 : {"name" : "Sableux","color":"#ff8223","key" : "q"},
+            9 : {"name" : "Trou","color":"#e10017","key" : "s"},
+             10: {"name" : "Bactéries","color":"#dc22dc","key" : "d"},
+            11 : {"name" : "(portion de) Cellule","color":"#2a2725","key" : "f"},
+            12 : {"name" : "Calcification","color":"#480f44","key" : "g"},
+            13 : {"name" : "Trou","color":"#e8e7e7","key" : "h"},
+            
              
         }
+
         return dict
     def __load_previous_config(self,dict : dict): 
 
@@ -75,10 +97,17 @@ class BackendHandler:
 
 
     def add_category(self,int_:int,name:str,color:str) : 
+            """
+            
+            
+            
+            """
+
+            assert 1==2,"L'ajout de catégorie n'est plus fonctionnel, ajouter la possibilité de sélectionner les raccourcis claviers pour cela"
             
             assert int_ not in self.available_categories.keys()
             assert (type(int_)==int)
-            assert (int_<10),"can't handle more than 9 categories"
+            #assert (int_<10),"can't handle more than 9 categories"
 
             self.available_categories[int_]={"name" : name, "color" : color}
             with open(os.path.join(self.config_dir, "config.json"),"r")as f: 
@@ -138,7 +167,7 @@ class BackendHandler:
                    self.current_pos[0]=self.current_pos[0]-1
                    self.current_pos[1]=9
                    self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
-        print("pos: ",self.current_pos)
+        #print("pos: ",self.current_pos)
 
     
     def change_Image_color(self, cat) : 

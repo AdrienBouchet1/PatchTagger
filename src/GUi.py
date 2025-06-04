@@ -14,6 +14,7 @@ class loader :
     def __init__(self) : 
         super().__init__()
         self.backend_handler=backend_handler.BackendHandler()
+        print("au départ, les catégories sont : {} ".format(self.backend_handler.available_categories))
         self.__instantiate()
         
         
@@ -106,15 +107,15 @@ class main_window(tkinter.Frame) :
         self.bind("<Right>",lambda e:  self.__change_patch_pos(e, 1))
         self.bind("<Left>",lambda e:  self.__change_patch_pos(e, -1))
 
-        self.bind("<KP_1>", lambda e:self.__classify_patch(e,1) )
-        self.bind("<KP_2>", lambda e:self.__classify_patch(e,2) )
-        self.bind("<KP_3>", lambda e:self.__classify_patch(e,3) )
-        self.bind("<KP_4>", lambda e:self.__classify_patch(e,4) )
-        self.bind("<KP_5>", lambda e:self.__classify_patch(e,5) )
-        self.bind("<KP_6>", lambda e:self.__classify_patch(e,6) )
-        self.bind("<KP_7>", lambda e:self.__classify_patch(e,7) )
-        self.bind("<KP_8>", lambda e:self.__classify_patch(e,8) )
-        self.bind("<KP_9>", lambda e:self.__classify_patch(e,9) )
+        # self.bind("<KP_1>", lambda e:self.__classify_patch(e,1) )
+        # self.bind("<KP_2>", lambda e:self.__classify_patch(e,2) )
+        # self.bind("<KP_3>", lambda e:self.__classify_patch(e,3) )
+        # self.bind("<KP_4>", lambda e:self.__classify_patch(e,4) )
+        # self.bind("<KP_5>", lambda e:self.__classify_patch(e,5) )
+        # self.bind("<KP_6>", lambda e:self.__classify_patch(e,6) )
+        # self.bind("<KP_7>", lambda e:self.__classify_patch(e,7) )
+        # self.bind("<KP_8>", lambda e:self.__classify_patch(e,8) )
+        # self.bind("<KP_9>", lambda e:self.__classify_patch(e,9) )
     
 
 
@@ -131,10 +132,20 @@ class main_window(tkinter.Frame) :
         
         dic_classes=self.backend_handler.available_categories 
         for index,(key,dic) in enumerate(dic_classes.items())  : 
-            lab1=ttk.Label(master=self.categories_frame,text="{} : {}".format(key,dic["name"]),style="category_label.TLabel")
-            lab1.grid(row=index+2,column=0,sticky="we")
+
+            #lab1=ttk.Label(master=self.categories_frame,text="{} : {}".format(key,dic["name"]),style="category_label.TLabel")
+            #lab1.grid(row=index+2,column=0,sticky="we")
+
+            but1=ttk.Button(master=self.categories_frame,text=dic["name"],command=lambda key=key :(self.__classify_patch(None,key),self.focus_set()))
+            but1.grid(row=index+2,column=0)
+            self.bind(dic["key"], lambda e,key=key:self.__classify_patch(e,key) )
+
+
+
             color_label = tkinter.Label(self.categories_frame, bg=dic["color"], width=4, height=2, relief="solid", bd=1)
             color_label.grid(row=index+2,column=1)
+
+            
         print(dic_classes)
         
             
@@ -150,6 +161,7 @@ class main_window(tkinter.Frame) :
          
         if self.backend_handler.prepared_output :
             if cat in self.backend_handler.available_categories :  
+                print("avant classification, cats disops : {}".format(self.backend_handler.available_categories))
                 self.backend_handler.change_Image_color(cat)
                 self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
                 self.lab_main_image.config(image=self.main_image)
@@ -158,7 +170,10 @@ class main_window(tkinter.Frame) :
                 self.patch= ImageTk.PhotoImage(self.backend_handler.patch)
                 self.lab_patch.config(image=self.patch)
                 self.lab_patch.image=self.patch
-            else: 
+            
+            else : 
+                print("cat {} not recognized".format(cat) )
+        else: 
         
                 print("Configure output before")
 
@@ -300,7 +315,12 @@ class config_window(tkinter.Frame) :
        
     def __grid_components(self):
 
-        self.add_categories_frame.grid(row=0,column=0)
+
+
+        ### Simplement désactivé l'ajout de nouvelle catégorie
+        # self.add_categories_frame.grid(row=0,column=0)
+
+
         self.folder_selection_frame.grid(row=0,column=1)
         self.saving_patches_frame.grid(row=0,column=2)
        
@@ -362,7 +382,7 @@ class config_window(tkinter.Frame) :
 
     def __output_folder_selection(self) : 
 
-        self.output_file_folder=tkinter.filedialog.askdirectory(initialdir="/home/adrienb/Documents/Adrien/Code/output_PTagger",title="Select an output folder")
+        self.output_file_folder=tkinter.filedialog.askdirectory(initialdir="/home/adrienb/Documents/Adrien/datasets/New_dataset/PatchTagger_Output",title="Select an output folder")
         self.output_folder_var.set("folder : {}".format(self.output_file_folder))
         self.backend_handler.prepare_output(self.output_file_folder)
 
