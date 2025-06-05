@@ -57,27 +57,33 @@ class BackendHandler:
         #     9 : {"name" : "gros trous","color":"#e10017"},
              
         # }
-
+        
+        ### On va load les vignettes,ici
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        vignette_dir=os.path.join(base_dir,"vignettes")
 
         dict={
 
             
-            1 : {"name" : "Totalement homogène","color":"#6558F2","key" : "a" },
-            2 : {"name" : "Plutôt homogène","color":"#7d12d4","key" : "z" },
-            3 : {"name" : "Faisceaux","color":"#6ef07d","key" : "e"},
-            4 : {"name" : "Filaments","color":"#099406","key" : "r"},
-            5: {"name" : "Stratifié rectiligne","color":"#e409f7","key" : "t"},
-            6 : {"name" : "Stratifié sinueux","color":"#a9399c","key" : "y"},
-            7: {"name" : "Granuleux","color":"#b55e07","key" : "u"},
-            8 : {"name" : "Sableux","color":"#ebcf6a","key" : "q"},
-            9 : {"name" : "Trou","color":"#e10017","key" : "s"},
-             10: {"name" : "Bactéries","color":"#03f4f8","key" : "d"},
-            11 : {"name" : "(portion de) Cellule","color":"#2ba57e","key" : "f"},
-            12 : {"name" : "Calcification","color":"#a0a0a0","key" : "g"},
-            13 : {"name" : "Nd","color":"#e8e7e7","key" : "h"},
+            1 : {"name" : "Totalement homogène","color":"#6558F2","key" : "a", "vignette": "TotalementHomogene.tif" },
+            2 : {"name" : "Plutôt homogène","color":"#7d12d4","key" : "z", "vignette": "PlutotHomogene.tif" },
+            3 : {"name" : "Faisceaux","color":"#6ef07d","key" : "e", "vignette":"FibreuxFaisceaux.tif"},
+            4 : {"name" : "Filaments","color":"#099406","key" : "r", "vignette":"FibreuxFilaments.tif"},
+            5: {"name" : "Stratifié rectiligne","color":"#e409f7","key" : "t", "vignette":"StratifieRectiligne.tif"},
+            6 : {"name" : "Stratifié sinueux","color":"#a9399c","key" : "y", "vignette":"StratifieSinueux.tif"},
+            7: {"name" : "Granuleux","color":"#b55e07","key" : "u", "vignette":"Granuleux-Epais.tif"},
+            8 : {"name" : "Sableux","color":"#ebcf6a","key" : "q", "vignette":"GranuleuxFinSable.tif"},
+            9 : {"name" : "Trou","color":"#e10017","key" : "s", "vignette":"trou.tif"},
+             10: {"name" : "Bactéries","color":"#03f4f8","key" : "d", "vignette":"bacterie.tif"},
+            11 : {"name" : "(portion de) Cellule","color":"#2ba57e","key" : "f", "vignette":"CelluleOuPartieDeCellule.tif"},
+            12 : {"name" : "Calcification","color":"#a0a0a0","key" : "g", "vignette":"calcification.tif"},
+            13 : {"name" : "Nd","color":"#e8e7e7","key" : "h", "vignette":"nd.tif"},
             
              
         }
+
+        for key in dict.keys(): 
+            dict[key]["vignette"]=os.path.join(vignette_dir,dict[key]["vignette"])
 
     
 

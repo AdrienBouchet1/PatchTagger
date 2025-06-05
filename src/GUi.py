@@ -132,7 +132,7 @@ class main_window(tkinter.Frame) :
 
     def __maj_categorie_frame(self) : 
         
-        
+        self.vignettes=list()
         self.lab_keyboard=ttk.Label(master=self.categories_frame,text="Clavier")
         dic_classes=self.backend_handler.available_categories 
         for index,(key,dic) in enumerate(dic_classes.items())  : 
@@ -146,6 +146,12 @@ class main_window(tkinter.Frame) :
 
             lab1=ttk.Label(master=self.categories_frame,text="{}".format(dic["key"]))
             lab1.grid(row=index+2,column=2)
+            v_pil=Image.open(dic["vignette"])
+            v_pil=v_pil.resize((45,45))
+            v=ImageTk.PhotoImage(v_pil)
+            self.vignettes.append(v)
+            lab_v=ttk.Label(master=self.categories_frame,image=self.vignettes[-1])
+            lab_v.grid(row=index+2,column=3,pady=10,padx=10)
 
 
 
@@ -185,7 +191,7 @@ class main_window(tkinter.Frame) :
                 print("Configure output before")
 
 
-
+    
 
 
     def __grid_components(self) : 
