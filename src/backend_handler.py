@@ -5,7 +5,7 @@ from PIL import Image,ImageTk
 import pandas as pd 
 import json 
 import ast
-
+import shutil 
 
 class BackendHandler:
 
@@ -230,17 +230,49 @@ class BackendHandler:
             
             
         else :
+
+            
+
+
+
+
+
+            
+
+
+
+
             folder_cat=os.path.join(self.output_dir,"patches")
+            #### On part du principe que si il y'avait déja des patchs/images colorées, on supprime tout pour réécraser 
+
+            
+
+
+
             if not os.path.exists(folder_cat) : 
                 os.makedirs(folder_cat) 
+            else : 
+                for c in os.listdir(folder_cat) : 
+                      shutil.rmtree(os.path.join(folder_cat,c))
+            
                 
             for cat in self.available_categories.keys() :
                 path_cat=os.path.join(folder_cat,"{}".format(cat))
                 if not os.path.exists(path_cat) : 
                     os.makedirs(path_cat)
+
+
             full_image_folder=os.path.join(self.output_dir,"full_images")
+
             if not os.path.exists(full_image_folder) : 
                 os.makedirs(full_image_folder)
+            else : 
+                for f in os.listdir(full_image_folder) : 
+                    os.remove(os.path.join(full_image_folder,f))
+
+
+                        
+
 
             
                 

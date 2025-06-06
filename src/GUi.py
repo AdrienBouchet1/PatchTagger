@@ -150,8 +150,11 @@ class main_window(tkinter.Frame) :
             v_pil=v_pil.resize((45,45))
             v=ImageTk.PhotoImage(v_pil)
             self.vignettes.append(v)
-            lab_v=ttk.Label(master=self.categories_frame,image=self.vignettes[-1])
-            lab_v.grid(row=index+2,column=3,pady=10,padx=10)
+
+
+            #### Ces deux lignes ne sont pas compatibles MacOs
+            # lab_v=ttk.Label(master=self.categories_frame,image=self.vignettes[-1])
+            # lab_v.grid(row=index+2,column=3,pady=10,padx=10)
 
 
 
@@ -257,8 +260,6 @@ class main_window(tkinter.Frame) :
             print("configure output before")
         
     def __change_image(self,Event,way) : 
-
-
 
         if self.backend_handler.prepared_output :
                 self.backend_handler.change_image(way)

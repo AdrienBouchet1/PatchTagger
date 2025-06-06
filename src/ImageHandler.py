@@ -1,10 +1,11 @@
 
-from PIL import Image,ImageDraw,ImageTk
+from PIL import Image,ImageDraw,ImageTk,ImageFont
 import numpy as np 
 import copy
 import os 
 import pandas as pd 
 import ast
+
 
 class ImageHandler : 
 
@@ -46,9 +47,58 @@ class ImageHandler :
         self.im_array=np.array(self.image)
 
         assert self.im_array.shape==(768,1280), "the image must be of size 768x1280"
+        self.image=self.__add_ScaleBar(self.image)
         self.image_patches_=self.__get_image_patches()
         
+     
+
+
+    def __add_ScaleBar(self,image): 
+         
+          """ Fonction faite par ChatGpt
+          """
+ 
+          #### ATTENTION : Ces échelles sont spécifiques
+          px_per_nm = 1 / 24.8        # pixels par nm 
+          px_per_um = px_per_nm * 1000  # pixels par µm
+          bar_length_um = 10
+          bar_length_px = int(px_per_um * bar_length_um) 
+          margin = 30
+          bar_height = 8
+
+
+          draw = ImageDraw.Draw(image)
+
+          x2 = image.width - margin
+          y2 = image.height - margin
+          x1 = x2 - bar_length_px
+          y1 = y2 - bar_height
+
+          draw.rectangle([x1, y1, x2, y2], fill="white")
+          
+          base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+          font_path=os.path.join(base_dir,"src","OpenSans-VariableFont_wdth,wght.ttf")
+          font = ImageFont.truetype(font_path, 40)
+
+
+          text = f"{bar_length_um} µm"
+
+
+          bbox = draw.textbbox((0, 0), text, font=font)
+          text_width = bbox[2] - bbox[0]
+          text_height = bbox[3] - bbox[1]
+
+          text_x = x1 + (bar_length_px - text_width) // 2
+          text_y = y1 - text_height - 15
+
+          
+          draw.text((text_x, text_y), text, fill="white", font=font)
+
+          return image
+
         
+
+
 
     def __get_image_patches(self,n_rows=6,n_cols=10) : 
 
@@ -143,7 +193,9 @@ class ImageHandler :
          patch=patch.resize(self.patch_size,Image.NEAREST)
 
          #patch_tk=ImageTk.PhotoImage(patch)
+
          boxed_image=self.__draw_patch_box(self.image_patches_[tuple(pos)]["pos"]).resize((640,384))
+
          #boxed_image_tk=ImageTk.PhotoImage(boxed_image)
          return patch, boxed_image   
 
