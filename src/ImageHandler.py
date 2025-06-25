@@ -18,7 +18,7 @@ class ImageHandler :
         self.ImageName=os.path.basename(self.path)
         self.extension_mask=extension_mask
         self.df_state=df_category.loc[df_category["Image_name"] == self.ImageName]
-        print("à l'init: le df du handler est : {}".format(self.df_state) )
+        #print("à l'init: le df du handler est : {}".format(self.df_state) )
         self.available_categories=available_categories
         self.__open_image()
         self.__load_previous_categories()
