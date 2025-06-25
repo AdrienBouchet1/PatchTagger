@@ -230,12 +230,18 @@ class main_window(tkinter.Frame) :
 
         var=self.context_checkvar.get()
         if var : 
-             self.lab_main_image.grid()
+             #self.lab_main_image.grid()
              self.backend_handler.display_context=True
-    
+             self.backend_handler.change_ImageHandler_display_context(True)
+             #pour refresh, pas propre mais bon
+             self.__change_patch_pos(event=None,way=1)
+             self.__change_patch_pos(event=None,way=-1)
         else : 
-             self.lab_main_image.grid_remove()
+             #self.lab_main_image.grid_remove()
              self.backend_handler.display_context=False
+             self.backend_handler.change_ImageHandler_display_context(False)
+             self.__change_patch_pos(event=None,way=1)     
+             self.__change_patch_pos(event=None,way=-1) 
         self.focus_set()
         
 
@@ -263,7 +269,9 @@ class main_window(tkinter.Frame) :
 
         if self.backend_handler.prepared_output :
                 self.backend_handler.change_image(way)
-
+         
+                self.backend_handler.change_ImageHandler_display_context(self.backend_handler.display_context)
+                
                 self.main_image= ImageTk.PhotoImage(self.backend_handler.Image)
                 self.lab_main_image.config(image=self.main_image)
                 self.lab_main_image.image=self.main_image

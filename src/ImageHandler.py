@@ -19,10 +19,13 @@ class ImageHandler :
         self.extension_mask=extension_mask
         self.df_state=df_category.loc[df_category["Image_name"] == self.ImageName]
         #print("à l'init: le df du handler est : {}".format(self.df_state) )
+        self.blankImage=Image.fromarray(np.full((768,1280),fill_value=255,dtype=np.uint8) )        
         self.available_categories=available_categories
         self.__open_image()
         self.__load_previous_categories()
         self.patch_size=patch_size
+        self.display_context=True
+        
 
     def  __load_previous_categories(self): 
          
@@ -48,6 +51,8 @@ class ImageHandler :
 
         assert self.im_array.shape==(768,1280), "the image must be of size 768x1280"
         self.image=self.__add_ScaleBar(self.image)
+        self.blankImage=self.__add_ScaleBar(self.blankImage)
+
         self.image_patches_=self.__get_image_patches()
         
      
@@ -138,13 +143,16 @@ class ImageHandler :
          
          
          image=self.image.copy().convert("RGB")
+         blankImage=self.blankImage.copy().convert("RGB")
+
          draw = ImageDraw.Draw(image)
-   
+         draw2=ImageDraw.Draw(blankImage)
+
          (x_min, x_max, y_min, y_max) = tuple_coord
          draw.rectangle([y_min, x_min, y_max, x_max], outline="red", width=2)
-
-
-         return image
+         draw2.rectangle([y_min, x_min, y_max, x_max], outline="red", width=2)
+         
+         return image,blankImage
     
     def load_mask(self) : 
          """
@@ -194,27 +202,51 @@ class ImageHandler :
 
          #patch_tk=ImageTk.PhotoImage(patch)
 
-         boxed_image=self.__draw_patch_box(self.image_patches_[tuple(pos)]["pos"]).resize((640,384))
+         boxed_image,boxedBlank=self.__draw_patch_box(self.image_patches_[tuple(pos)]["pos"])[0].resize((640,384)),self.__draw_patch_box(self.image_patches_[tuple(pos)]["pos"])[1].resize((640,384)),
 
          #boxed_image_tk=ImageTk.PhotoImage(boxed_image)
-         return patch, boxed_image   
+         if self.display_context : 
+               print("cas 1")
+               return patch, boxed_image
+         else : 
+               print("cas 2")
+               return patch, boxedBlank
+         
+
 
     
         
     def change_color_patch(self,pos,color): 
       
         self.image=self.image.convert("RGBA")
+        self.blankImage=self.blankImage.convert("RGBA")
+        
         if "color" in self.image_patches_[tuple(pos)].keys():
              
              x_min, x_max, y_min, y_max=self.image_patches_[tuple(pos)]["pos"]
+            
+            
              original_patch=np.stack((np.array(self.image_patches_[tuple(pos)]["patch"]),)*3,axis=-1) ##Passage en RGB
+             patch_blank = np.stack([np.full_like(self.image_patches_[tuple(pos)]["patch"], 255)] * 3, axis=-1)
+
+             
              alpha=np.full((original_patch.shape[0], original_patch.shape[1], 1), 255, dtype=np.uint8)
+             print(original_patch.shape)
+             print(alpha.shape)
+          
+             print(patch_blank.shape)
              
              original_patch=np.concatenate((original_patch,alpha ), axis=-1)
+             patch_blank=np.concatenate((patch_blank,alpha ), axis=-1)
+             
+             
              tab_image=np.array(self.image)
+             tab_blank=np.array(self.blankImage)
+
              tab_image[x_min:x_max,y_min:y_max]=original_patch
-         
+             tab_blank[x_min:x_max,y_min:y_max]=patch_blank
              self.image=Image.fromarray(tab_image)
+             self.blankImage=Image.fromarray(tab_blank)
                
              if self.image_patches_[tuple(pos)]["color"] == color : 
                 del self.image_patches_[tuple(pos)]["color"]
@@ -223,15 +255,20 @@ class ImageHandler :
         
 
         self.image_patches_[tuple(pos)]["color"]=color
+
         self.image=self.image.convert("RGBA")
+        self.blankImage=self.blankImage.convert("RGBA")
+
         rgb = tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
         opacity = int(0.3 * 255)
       
+
         (y_min, y_max, x_min, x_max) = tuple(self.image_patches_[tuple(pos)]["pos"])
         overlay = Image.new("RGBA", (x_max - x_min, y_max - y_min), rgb + (opacity,))
 
         # Appliquer l'overlay sur l'image
         self.image.paste(overlay, (x_min, y_min), overlay)
+        self.blankImage.paste(overlay, (x_min, y_min), overlay)
 
 
 

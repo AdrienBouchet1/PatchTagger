@@ -23,6 +23,7 @@ class BackendHandler:
         self.list_files=None
         self.folder=None
         self.Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
+        self.blank_Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
         self.patch=Image.fromarray(np.full((128,128), fill_value=255,dtype=np.uint8))
         self.prepared_output=False
         self.available_categories=self.__instantiate_default_categories()
@@ -44,7 +45,6 @@ class BackendHandler:
         # }
 
         # dict={
-
             
         #     1 : {"name" : "Ultra lisse","color":"#F2C458"},
         #     2 : {"name" : "lisse, plat, irrégulier","color":"#a68108"},
@@ -134,6 +134,7 @@ class BackendHandler:
         self.list_files=list_
         self.current_file_path=self.list_files[0]
         self.ImageHandler=ImageHandler.ImageHandler(self.current_file_path,self.df_category,self.available_categories)
+        
         self.current_pos=[0,0]
         self.Image,self.patch=self.ImageHandler.get_box_image_patch(self.current_pos)
 
@@ -164,6 +165,7 @@ class BackendHandler:
         self.ImageHandler=ImageHandler.ImageHandler(self.current_file_path,self.df_category,self.available_categories)
         self.current_pos=[0,0]
         self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
+        
        
 
     def change_patch(self, way : int):
@@ -191,7 +193,18 @@ class BackendHandler:
                    self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
         #print("pos: ",self.current_pos)
 
-    
+    def change_ImageHandler_display_context(self,Context: bool):
+        
+        # if self.display_context==True : 
+          
+        #     self.ImageHandler.display_context=Context
+        
+        # elif self.display_context==False :
+          
+        #      self.ImageHandler.display_context=Context
+             
+        self.ImageHandler.display_context=Context 
+
     def change_Image_color(self, cat) : 
         """
         En fait c'est aussi la méthode qui permet de catégoriser
@@ -199,6 +212,8 @@ class BackendHandler:
         """
         assert cat in self.available_categories.keys()
         color=self.available_categories[cat]["color"]
+       
+
         self.ImageHandler.change_color_patch(self.current_pos,color)
         self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
 
