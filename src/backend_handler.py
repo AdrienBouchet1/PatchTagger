@@ -6,6 +6,9 @@ import pandas as pd
 import json 
 import ast
 import shutil 
+from pathlib import Path
+
+
 
 class BackendHandler:
 
@@ -27,10 +30,43 @@ class BackendHandler:
         self.patch=Image.fromarray(np.full((128,128), fill_value=255,dtype=np.uint8))
         self.prepared_output=False
         self.available_categories=self.__instantiate_default_categories()
+        self.__load_config()
 
 
     
+    def __load_config(self): 
 
+      
+
+        chemin_script = str(Path(__file__).resolve()).split("backend_handler.py")[0]
+        print("chemin config : ",os.path.join(chemin_script,"config.json"))
+        assert os.path.exists(os.path.join(chemin_script,"config.json")), "Aucune config détectée. Il faut d'abord créer un fichier config.json"
+
+
+        with open(os.path.join(chemin_script,"config.json"),'r') as file : 
+
+            cfg=json.load(file)
+        
+
+        output_folder=cfg["output_folder"]
+        data_folder=cfg["data_folder"]
+
+        assert os.path.exists(output_folder), "le dossier d'output ('{}') n'existe pas".format(output_folder)
+        assert os.path.exists(data_folder),"le dossier de data sélectionné  ('{}') n'existe pas".format(data_folder)
+
+        self.folder=data_folder
+        self.prepare_output(output_folder)
+        self.list_dir()
+
+
+
+
+
+       # if os.path.exists(os.path.join(chemin_script))
+
+
+
+        
     def __instantiate_default_categories(self): 
 
 
