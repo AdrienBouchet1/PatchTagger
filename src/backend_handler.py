@@ -285,14 +285,6 @@ class BackendHandler:
             
 
 
-
-
-
-            
-
-
-
-
             folder_cat=os.path.join(self.output_dir,"patches")
             #### On part du principe que si il y'avait déja des patchs/images colorées, on supprime tout pour réécraser 
 
@@ -305,13 +297,13 @@ class BackendHandler:
             else : 
                 for c in os.listdir(folder_cat) : 
                       shutil.rmtree(os.path.join(folder_cat,c))
-            
+                print("tout supprimé !")
                 
             for cat in self.available_categories.keys() :
                 path_cat=os.path.join(folder_cat,"{}".format(cat))
                 if not os.path.exists(path_cat) : 
                     os.makedirs(path_cat)
-
+            
 
             full_image_folder=os.path.join(self.output_dir,"full_images")
 
@@ -328,21 +320,22 @@ class BackendHandler:
             
                 
             for image_path in self.list_files :
-
+                    
                 subset_df=self.df_category.loc[self.df_category["Image_path"]==image_path]
                 image_handler=ImageHandler.ImageHandler(image_path,self.df_category,self.available_categories,"_cp_masks.png")
                 image_handler.load_mask()
                 
                 full_img_name=image_handler.ImageName
-
+                print("ok 1")
                 if subset_df.shape[0] != 0 :
-                        
+                    print("ok 2")
                     img=image_handler.get_image_classified().convert("RGB")
                     
                     img.save(os.path.join(full_image_folder,full_img_name))
 
-                
-                
+                else : 
+                    print(image_path)
+                print("ok 3")
                 for index,row in subset_df.iterrows() :
                     
                     pos,cat=tuple(ast.literal_eval(row["patch_pos"])),int(row["category"])
@@ -395,7 +388,7 @@ class BackendHandler:
             with open(os.path.join(self.config_dir, "config.json"),"r")as f: 
                 data = json.load(f)
 
-            self.__load_previous_config(data)
+            #self.__load_previous_config(data)
         
 
                 
