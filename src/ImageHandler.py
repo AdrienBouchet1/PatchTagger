@@ -23,7 +23,8 @@ class ImageHandler :
         self.available_categories=available_categories
         self.__open_image()
         self.__load_previous_categories()
-        self.patch_size=patch_size
+
+        self.patch_size=(32,32)
         self.display_context=True
         
 
@@ -111,7 +112,8 @@ class ImageHandler :
             Permet de récupérer les patch ses infors
 
             """
-        
+            n_rows=24
+            n_cols=40
 
             assert self.im_array.ndim == 2, "L'image doit être en 2D (grayscale)"
             height, width = self.im_array.shape

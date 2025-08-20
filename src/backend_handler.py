@@ -17,20 +17,23 @@ class BackendHandler:
 
         self.__instantiate_variables()
         
+        
 
 
     def __instantiate_variables(self): 
         
-
+        self.patch_shape=(32,32)
         self.display_context=True
         self.list_files=None
         self.folder=None
         self.Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
         self.blank_Image=Image.fromarray(np.full((384,640), fill_value=255,dtype=np.uint8))
-        self.patch=Image.fromarray(np.full((128,128), fill_value=255,dtype=np.uint8))
+        #self.patch=Image.fromarray(np.full((128,128), fill_value=255,dtype=np.uint8))
+        self.patch=Image.fromarray(np.full(self.patch_shape, fill_value=255,dtype=np.uint8))
         self.prepared_output=False
         self.available_categories=self.__instantiate_default_categories()
         self.__load_config()
+    
 
 
     
@@ -206,13 +209,22 @@ class BackendHandler:
 
     def change_patch(self, way : int):
         assert way in [1,-1]
+
+        if self.patch_shape==(32,32) :
+            b1=39 #1280/32 -1
+            b2=23 #768/32 -1
+        elif  self.patch_shape==(128,128) :
+          
+            b1=9 #1280/32 -1
+            b2=5 
+
         if way==1 : 
-            if self.current_pos[1]<9:
+            if self.current_pos[1]<b1:
                 self.current_pos[1]=self.current_pos[1]+1
                 self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
 
             else: 
-                if self.current_pos[0]<5 : 
+                if self.current_pos[0]<b2 : 
                    self.current_pos[0]=self.current_pos[0]+1
                    self.current_pos[1]=0
                    self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
@@ -225,7 +237,7 @@ class BackendHandler:
             else: 
                 if self.current_pos[0]>0 : 
                    self.current_pos[0]=self.current_pos[0]-1
-                   self.current_pos[1]=9
+                   self.current_pos[1]=b1
                    self.patch,self.Image=self.ImageHandler.get_box_image_patch(self.current_pos)
         #print("pos: ",self.current_pos)
 
